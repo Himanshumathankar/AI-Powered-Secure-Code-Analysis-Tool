@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI-Powered Secure Code Analysis Tool</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="logo">🔐 SecureAI Analyzer</div>
+      <p class="tagline">AI-Powered Static & Dynamic Security Analysis</p>
+    </div>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <div class="card">
+      <h2>Analyze Your Code</h2>
+      <p>Paste your source code or upload a file to detect security vulnerabilities powered by static analysis and AI.</p>
+
+      <form action="{{ url_for('analyze') }}" method="post" enctype="multipart/form-data" id="analyzeForm">
+
+        <div class="form-group">
+          <label for="language">Language hint (used when pasting code)</label>
+          <select name="language" id="language" class="form-control">
+            <option value="py">Python</option>
+            <option value="js">JavaScript</option>
+            <option value="ts">TypeScript</option>
+            <option value="java">Java</option>
+            <option value="php">PHP</option>
+            <option value="rb">Ruby</option>
+            <option value="go">Go</option>
+            <option value="cs">C#</option>
+            <option value="cpp">C++</option>
+            <option value="c">C</option>
+            <option value="sql">SQL</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="code">Paste source code</label>
+          <textarea name="code" id="code" class="form-control code-area"
+            placeholder="# Paste your code here...
+import os
+user = input('Enter name: ')
+os.system('echo Hello ' + user)  # Command injection example"></textarea>
+        </div>
+
+        <div class="divider"><span>or</span></div>
+
+        <div class="form-group">
+          <label for="file">Upload a source file</label>
+          <input type="file" name="file" id="file" class="form-control"
+            accept="{{ allowed | join(',') }}" />
+          <small>Supported: {{ allowed | join(', ') }}</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          🔍 Analyze
+        </button>
+      </form>
+    </div>
+
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <h3>AI Analysis</h3>
+        <p>GPT-4o reviews your code for complex logic flaws, context-aware vulnerabilities and tailored remediation advice.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Static Analysis</h3>
+        <p>Instant pattern-based scanning detects SQL injection, XSS, command injection, hardcoded secrets and more.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <h3>Multi-Language</h3>
+        <p>Supports Python, JavaScript, Java, PHP, Ruby, Go, C/C++, C#, TypeScript, SQL and more.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3>CWE Mapping</h3>
+        <p>Every finding is mapped to a Common Weakness Enumeration (CWE) identifier for standardised reporting.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>AI-Powered Secure Code Analysis Tool &copy; 2024</p>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
