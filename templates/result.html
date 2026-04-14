@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Analysis Results – SecureAI Analyzer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="logo"><a href="{{ url_for('index') }}" style="color:inherit;text-decoration:none;">🔐 SecureAI Analyzer</a></div>
+      <p class="tagline">AI-Powered Static &amp; Dynamic Security Analysis</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Summary bar -->
+    <div class="summary-bar risk-{{ result.overall_risk | lower }}">
+      <div class="summary-info">
+        <span class="risk-badge">{{ result.overall_risk }}</span>
+        <span><strong>{{ result.language }}</strong> · {{ result.total }} issue{{ 's' if result.total != 1 }}</span>
+        {% if result.ai_available %}<span class="ai-badge">🧠 AI</span>{% endif %}
+      </div>
+      <a href="{{ url_for('index') }}" class="btn btn-outline">← New Analysis</a>
+    </div>
+
+    <!-- Summary text -->
+    <div class="card">
+      <h3>Summary</h3>
+      <p>{{ result.summary }}</p>
+
+      <div class="counts">
+        {% for sev in ['CRITICAL','HIGH','MEDIUM','LOW','INFO'] %}
+          {% if result.counts[sev] %}
+          <span class="count-chip sev-{{ sev | lower }}">{{ sev }}: {{ result.counts[sev] }}</span>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Findings -->
+    {% if result.vulnerabilities %}
+    <h2>Findings</h2>
+    {% for v in result.vulnerabilities %}
+    <div class="finding-card sev-border-{{ v.severity | lower }}">
+      <div class="finding-header">
+        <span class="finding-title">{{ v.title }}</span>
+        <div class="finding-meta">
+          <span class="sev-chip sev-{{ v.severity | lower }}">{{ v.severity }}</span>
+          {% if v.line %}<span class="line-badge">Line {{ v.line }}</span>{% endif %}
+          <span class="src-badge">{{ v.source }}</span>
+          {% if v.cwe %}<span class="cwe-badge"><a href="https://cwe.mitre.org/data/definitions/{{ v.cwe.replace('CWE-','') }}.html" target="_blank" rel="noopener">{{ v.cwe }}</a></span>{% endif %}
+        </div>
+      </div>
+      <div class="finding-body">
+        <p><strong>Description:</strong> {{ v.description }}</p>
+        <p><strong>Recommendation:</strong> {{ v.recommendation }}</p>
+      </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="card success-card">
+      <h3>✅ No vulnerabilities detected</h3>
+      <p>The analyzer found no known security issues. Always combine automated analysis with manual code review.</p>
+    </div>
+    {% endif %}
+
+    <!-- Source code -->
+    <details class="card code-details">
+      <summary>View submitted code</summary>
+      <pre class="code-block"><code>{{ code | e }}</code></pre>
+    </details>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>AI-Powered Secure Code Analysis Tool &copy; 2024</p>
+    </div>
+  </footer>
+</body>
+</html>
